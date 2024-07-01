@@ -49,6 +49,7 @@ import com.sarrafenterprises.expensetracker.viewModel.AddExpenseViewModel
 import com.sarrafenterprises.expensetracker.viewModel.AddExpenseViewModelFatory
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
@@ -153,7 +154,8 @@ fun DataForm(modifier: Modifier = Modifier, onAddExpenseClicked: (model : Expens
                 disabledLabelColor = Color.Gray,
                 disabledPlaceholderColor = Color.Gray,
             ), keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text
+                capitalization = KeyboardCapitalization.Words,
+                keyboardType = KeyboardType.Text,
             ), singleLine = true)
 
         Spacer(modifier = Modifier.height(16.dp))
