@@ -51,10 +51,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 
-
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AddExpense(navController: NavController) {
     val viewModel = AddExpenseViewModelFatory(LocalContext.current).create(AddExpenseViewModel::class.java)
