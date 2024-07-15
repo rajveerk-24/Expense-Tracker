@@ -9,7 +9,7 @@ import com.sarrafenterprises.expensetracker.Data.model.ExpenseEntity
 import com.sarrafenterprises.expensetracker.R
 
 
-class TransactionViewModel(dao: ExpenseDao): ViewModel(){
+class TransactionViewModel(val dao: ExpenseDao): ViewModel(){
 
     val expenses = dao.getAllExpenses()
 

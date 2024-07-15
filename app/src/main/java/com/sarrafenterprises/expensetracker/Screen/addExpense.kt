@@ -106,8 +106,9 @@ fun AddExpense(navController: NavController) {
                 onAddExpenseClicked = {
                     scope.launch {
 
-                       if(viewModel.addExpense(it)){
-                           navController.popBackStack()
+                       if(viewModel.addExpense(it))
+                       {
+//                           navController.popBackStack()
                        }
                     }
                 }

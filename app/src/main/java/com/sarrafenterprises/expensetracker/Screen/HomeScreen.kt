@@ -3,6 +3,8 @@ package com.sarrafenterprises.expensetracker.Screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.DropdownMenu
@@ -27,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -109,7 +113,7 @@ ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         )
     }
 
-val state = viewModel.expenses.collectAsState(initial = emptyList())
+    val state = viewModel.expenses.collectAsState(initial = emptyList())
     val balance = viewModel.getBalance(state.value)
     val expenses = viewModel.getTotalExpense(state.value)
     val income = viewModel.getTotalIncome(state.value)
@@ -126,7 +130,7 @@ val state = viewModel.expenses.collectAsState(initial = emptyList())
         }
     })
 
-    TransactionList(modifier = Modifier
+    Box(modifier = Modifier
         .fillMaxWidth()
         .constrainAs(list) {
             top.linkTo(card.bottom)
@@ -134,8 +138,14 @@ val state = viewModel.expenses.collectAsState(initial = emptyList())
             end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
             height = Dimension.fillToConstraints
+
         }
-        .padding(horizontal = 10.dp), list = state.value, viewModel, navController )
+    ) {
+    TransactionList(modifier = Modifier.padding(horizontal = 10.dp), list = state.value, viewModel, navController )
+        Text(text = "Made with ❤ in India by Rajveer", fontSize = 8.sp, modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(30.dp))
+    }
 
     FloatingActionButton(
         onClick = {
@@ -146,7 +156,7 @@ val state = viewModel.expenses.collectAsState(initial = emptyList())
             end.linkTo(parent.end, margin = 16.dp)
         }
     ) {
-        Icon(Icons.Filled.Create, "Floating action button.", tint = Color(0xFF33847E))
+        Icon(Icons.Filled.Create, "Floating action button.")
     }
 }
 }
@@ -246,8 +256,11 @@ fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: Ho
 
     LazyColumn(modifier= modifier ) {
         item {
-            Box (modifier = Modifier.fillMaxWidth()){
-                Text(text = "Recent Transaction", fontSize = 20.sp,fontWeight = FontWeight.Bold)
+            Box (modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 15.dp)){
+                Text(text = "Recent Transaction", fontSize = 20.sp,fontWeight = FontWeight.Bold,modifier = Modifier
+                    .align(Alignment.CenterStart))
                 Text(text = "See all",
                     fontSize = 16.sp,
                     color = Color.Cyan,
@@ -256,7 +269,6 @@ fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: Ho
                         .clickable {
                             navController.navigate(TransactionHolder)
                         })
-        Spacer(modifier = Modifier.height(15.dp))
             }
         }
 
@@ -266,18 +278,21 @@ fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: Ho
                 amount = if (item.type == "Income") "+ ₹ ${item.amount }" else "- ₹ ${item.amount}",
                 icon = viewModel.getItemIcon(item),
                 date = getDateLabel(item.date),
-                color = if (item.type == "Income") Color.Green else Color.Red
+                color = if (item.type == "Income") Color.Green else Color.Red,
+                viewModel,
+                item = item
             )
         }
     }
 }
 
 @Composable
-fun TransactionItem(title: String, amount: String, icon: Int, date: String, color: Color){
+fun TransactionItem(title: String, amount: String, icon: Int, date: String, color: Color, viewModel: HomeViewModel, item: ExpenseEntity){
 
+    val scope = rememberCoroutineScope()
     Box(modifier = Modifier
         .fillMaxWidth()
-        .padding(8.dp)) {
+        .padding(vertical = 8.dp)) {
 
         Row {
             Image(painter = painterResource(id = icon), contentDescription = null,
@@ -291,15 +306,26 @@ fun TransactionItem(title: String, amount: String, icon: Int, date: String, colo
                     .align(Alignment.Start)
                     .padding(start = 5.dp), fontWeight = FontWeight.Medium)
                 HorizontalDivider(thickness = 2.dp, modifier = Modifier
-                    .width(150.dp)
+                    .width(200.dp)
                     .padding(start = 5.dp, end = 5.dp))
+
                 Text(text = date, fontSize = 16.sp, color = Color.Gray, modifier = Modifier
                     .align(Alignment.End)
                     .padding(end = 5.dp))
             }
         }
-            Text(text = amount, fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterEnd),
+        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+            Text(text = amount, fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold, color = color)
+
+            Icon(Icons.Filled.Delete, contentDescription = null,
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        viewModel.deleteExpense(item)
+                    }
+                })
+
+        }
     }
 
 }

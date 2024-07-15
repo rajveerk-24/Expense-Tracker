@@ -76,6 +76,10 @@ class HomeViewModel(val dao: ExpenseDao) : ViewModel() {
         dao.deleteAllExpenses()
     }
 
+    suspend fun deleteExpense(ExpenseEntity: ExpenseEntity) {
+        dao.deleteExpense(ExpenseEntity)
+    }
+
 }
 
 class HomeViewModelFatory(private val context: Context) : ViewModelProvider.Factory {
